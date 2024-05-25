@@ -1,5 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages; 
+using Microsoft.AspNetCore.Mvc.RazorPages;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace WebApplicationDrexlerMacaspac.Pages
 {
@@ -18,7 +22,7 @@ namespace WebApplicationDrexlerMacaspac.Pages
         public SearchParameters? SearchParams { get; set; }
 
 
-        public void OnGet(string? keyword = "", string? searchBy = "", string? sortBy = null, string? sortAsc = "true")
+        public void OnGet(string? keyword = "", string? searchBy = "", string? sortBy = null, string? sortAsc = "true", int pageSize = 5, int pageIndex = 1)
         {
             if (SearchParams == null)
             {
@@ -27,7 +31,9 @@ namespace WebApplicationDrexlerMacaspac.Pages
                     SortBy = sortBy,
                     SortAsc = sortAsc == "true",
                     SearchBy = searchBy,
-                    Keyword = keyword
+                    Keyword = keyword,
+                    PageIndex = pageIndex,
+                    PageSize = pageSize
                 };
             }
             
@@ -152,7 +158,7 @@ namespace WebApplicationDrexlerMacaspac.Pages
                 if (SearchParams.SortBy == null || SearchParams.SortAsc == null)
                 {
                     this.Cars = Cars;
-                    return;
+                    goto page;
                 }
 
                 if (SearchParams.SortBy.ToLower() == "make" && SearchParams.SortAsc == true)
@@ -191,7 +197,15 @@ namespace WebApplicationDrexlerMacaspac.Pages
                 {
                     this.Cars = Cars;
                 }
-            }
+        page:
+            //Paging
+            int rem = this.Cars.Count % pageSize;
+            float pageCount = (this.Cars.Count / pageSize) + (rem > 0 ? 1 : 0);
+            int skip = (pageIndex <= pageCount ? pageSize * (pageIndex - 1) : pageSize * (Convert.ToInt32(pageCount - 1)));
+            this.Cars = this.Cars.Skip(skip).Take(pageSize).ToList();
+            SearchParams.SearchCount = this.Cars.Count;
+            SearchParams.PageCount = Convert.ToInt32(pageCount);
+        }
 
         public class Car
         {
@@ -199,6 +213,7 @@ namespace WebApplicationDrexlerMacaspac.Pages
             public string Model { get; set; }
             public int Year { get; set; }
             public string Color { get; set; }
+           
         }
 
         public class SearchParameters
@@ -207,6 +222,10 @@ namespace WebApplicationDrexlerMacaspac.Pages
             public string? Keyword { get; set; } 
             public string? SortBy { get; set; }
             public bool? SortAsc { get; set; }
+            public int? PageSize { get; set; }
+            public int? PageIndex { get; set; }
+            public int? PageCount { get; set; }
+            public int? SearchCount { get; set; }
         }
 
     }
