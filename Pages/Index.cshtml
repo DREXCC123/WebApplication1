@@ -10,31 +10,49 @@
     <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
 </div>
 
+<div class="input-group mb-3">
+    <label class="input-group-text" for="searchBy">Search By</label>
+    <select class="form-select" id="searchBy" asp-for="SearchParams.SearchBy">
+        <option value="" selected>Choose...</option>
+        <option value="Make">Make</option>
+        <option value="Model">Model</option>
+        <option value="Year">Year</option>
+        <option value="Color">Color</option>
+    </select>
+
+    <input type="text" id="keyword" class="form-control" asp-for="SearchParams.Keyword">
+    <button class="btn btn-outline-secondary" type="button" id="button-addon2" onclick="search()"><i class="bi bi-search"></i></button>
+</div>
+
 <table class="table">
     <thead>
         <tr>
-            <th scope="col">Make
+            <th scope="col">
+                Make
                 <div class="btn-group" role="group" aria-label="">
-                    <a href="~/index?sortBy=make&sortAsc=false" type="button" class="btn btn-secondary">&lt;</a>
-                    <a href="~/index?sortBy=make&sortAsc=true" type="button" class="btn btn-secondary">&gt;</a>
+                    <a href="~/index?sortBy=Make&sortAsc=false" type="button" class="btn btn-secondary">&lt;</a>
+                    <a href="~/index?sortBy=Make&sortAsc=true" type="button" class="btn btn-secondary">&gt;</a>
                 </div>
             </th>
-            <th scope="col">Model
+            <th scope="col">
+                Model
                 <div class="btn-group" role="group" aria-label="">
-                    <a href="~/index?sortBy=model&sortAsc=false" type="button" class="btn btn-secondary">&lt;</a>
-                    <a href="~/index?sortBy=model&sortAsc=true" type="button" class="btn btn-secondary">&gt;</a>
+                    <a href="~/index?sortBy=Model&sortAsc=false" type="button" class="btn btn-secondary">&lt;</a>
+                    <a href="~/index?sortBy=Model&sortAsc=true" type="button" class="btn btn-secondary">&gt;</a>
                 </div>
             </th>
-            <th scope="col">Year
+            <th scope="col">
+                Year
                 <div class="btn-group" role="group" aria-label="">
-                    <a href="~/index?sortBy=year&sortAsc=false" type="button" class="btn btn-secondary">&lt;</a>
-                    <a href="~/index?sortBy=year&sortAsc=true" type="button" class="btn btn-secondary">&gt;</a>
+                    <a href="~/index?sortBy=Year&sortAsc=false" type="button" class="btn btn-secondary">&lt;</a>
+                    <a href="~/index?sortBy=Year&sortAsc=true" type="button" class="btn btn-secondary">&gt;</a>
                 </div>
             </th>
-            <th scope="col">Color
+            <th scope="col">
+                Color
                 <div class="btn-group" role="group" aria-label="">
-                    <a href="~/index?sortBy=color&sortAsc=false" type="button" class="btn btn-secondary">&lt;</a>
-                    <a href="~/index?sortBy=color&sortAsc=true" type="button" class="btn btn-secondary">&gt;</a>
+                    <a href="~/index?sortBy=Color&sortAsc=false" type="button" class="btn btn-secondary">&lt;</a>
+                    <a href="~/index?sortBy=Color&sortAsc=true" type="button" class="btn btn-secondary">&gt;</a>
                 </div>
             </th>
         </tr>
@@ -42,12 +60,20 @@
     <tbody>
         @foreach (var car in Model.Cars)
         {
-                <tr>
-                    <td>@car.Make</td>
-                    <td>@car.Model</td>
-                    <td>@car.Year</td>
-                    <td>@car.Color</td>
-                </tr>
+            <tr>
+                <td>@car.Make</td>
+                <td>@car.Model</td>
+                <td>@car.Year</td>
+                <td>@car.Color</td>
+            </tr>
         }
     </tbody>
 </table>
+
+@section Scripts {
+    <script>
+        function search() {
+            window.location = "../index?sortBy=Make&sortAsc=false&searchBy=" + $("#searchBy").val() + "&keyword=" + $("#keyword").val()
+        }
+    </script>
+}
